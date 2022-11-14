@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "ToDoList",
-    "slug": "ToDoList",
+    "slug": "todolist",
+    "owner": "dim145",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,10 +25,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.dim145.todolist"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "43556dfc-ef6e-48b0-8448-090ad4dc817f"
+      }
     }
   }
 }
