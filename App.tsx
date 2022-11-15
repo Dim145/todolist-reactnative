@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import {
+  Animated,
   Button,
   DatePickerAndroid,
   DatePickerIOS,
@@ -16,13 +17,9 @@ import {useState} from "react";
 import {NavigationContainer} from "@react-navigation/native";
 import DateTimePicker, {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-
-type ToDo = {
-  title: string,
-  text: string,
-  date: Date,
-  state: boolean
-};
+import ToDo from './Todo';
+import Database from './Database';
+import database from "./Database";
 
 const baseData: ToDo[] = [
   {
@@ -43,18 +40,31 @@ const baseData: ToDo[] = [
     date: new Date(),
     state: true
   }
-]
+];
+
+// to fill with data in first time (to test obviously)
+Database().then(_ =>
+{
+  Database.getTodos().then(res =>
+  {
+    if(res.length == 0)
+    {
+      for (const baseDatum of baseData)
+        Database.addTodo(baseDatum);
+    }
+  });
+});
 
 const Stack = createNativeStackNavigator();
 
 function SqlAdd(item: ToDo)
 {
-  console.log('sql add', item);
+  Database.addTodo(item);
 }
 
 function ToDoListScreen({route, navigation}: any)
 {
-   const [todolist, setToDoList] = useState<ToDo[]>(baseData);
+   const [todolist, setToDoList] = useState<ToDo[]>([]);
 
     const newItem = (route.params || {}).newItem;
 
@@ -72,6 +82,9 @@ function ToDoListScreen({route, navigation}: any)
    const pending = todolist.filter(f => !f.state);
    const done = todolist.filter(f => f.state);
 
+   if(todolist.length == 0)
+      Database.getTodos().then(res => setToDoList(res));
+
    const onLongPressItem = (item: ToDo) => {
      item.state = !item.state;
 
@@ -86,7 +99,12 @@ function ToDoListScreen({route, navigation}: any)
    return <SafeAreaView>
      <View>
        <Button title='Add Todo' color={'blue'} onPress={() => navigation.navigate('AddItem')} />
-       <Button title='Remove Todos' onPress={() => setToDoList([])} />
+       <Button title='Remove Todos' onPress={() => {
+         for (const toDo of todolist)
+           database.removeTodo(toDo);
+
+         setToDoList([]);
+       }} />
 
        <Text style={styles.listTitle}>Pending</Text>
        <FlatList data={pending} renderItem={({item}) => <View>
@@ -141,8 +159,7 @@ function AddScreen({route, navigation}: any)
     <TextInput style={styles.input} value={item.text} onChange={(e) => setText(e.nativeEvent.text)}></TextInput>
 
     <Text>Date</Text>
-    <Text onPress={() =>
-    {
+    <Text onPress={() => {
       DateTimePickerAndroid.open({
         value: date,
         mode: "date",
