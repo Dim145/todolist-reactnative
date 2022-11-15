@@ -92,8 +92,10 @@ function ToDoListScreen({route, navigation}: any)
    };
 
    const onPressItem = (item: ToDo) => navigation.navigate('ToDo', {
-     title: item.title,
-     todolist: todolist
+     todo: {
+       ...item,
+       date: item.date.getTime()
+     }
    });
 
    return <SafeAreaView>
@@ -133,12 +135,11 @@ function ToDoListScreen({route, navigation}: any)
 
 function ToDoScreen({route, navigation}: any)
 {
-  const { title, todolist } = route.params;
-  const todo: ToDo = todolist.find((td: ToDo) => td.title == title);
+  const { todo } = route.params;
 
   return <View style={styles.container}>
     <Text>{todo.title}</Text>
-    <Text>{todo.date.toDateString()}</Text>
+    <Text>{(new Date(todo.date)).toDateString()}</Text>
     <Text>{todo.text}</Text>
   </View>
 }
