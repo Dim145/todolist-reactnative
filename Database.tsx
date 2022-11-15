@@ -122,7 +122,6 @@ database.getTodos = function(filters: any = {}, orderBy: {order: 'DESC' | 'ASC',
                     });
                 }
 
-                console.log(res);
                 resolve(res);
             },
             (transaction, error) =>

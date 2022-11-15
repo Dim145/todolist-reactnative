@@ -97,20 +97,24 @@ function ToDoListScreen({route, navigation}: any)
    });
 
    return <SafeAreaView>
-     <View>
-       <Button title='Add Todo' color={'blue'} onPress={() => navigation.navigate('AddItem')} />
+     <View style={styles.container}>
+       <View style={styles["mb-2"]}>
+         <Button title='Add Todo' color={'rgb(70,196,255)'} onPress={() => navigation.navigate('AddItem')} />
+       </View>
        <Button title='Remove Todos' onPress={() => {
          for (const toDo of todolist)
            database.removeTodo(toDo);
 
          setToDoList([]);
-       }} />
+       }} color={'red'} />
 
+       <Text style={styles["mt-2"]}>Tips: click to view details and long press to change status.</Text>
        <Text style={styles.listTitle}>Pending</Text>
        <FlatList data={pending} renderItem={({item}) => <View>
          <Text
              onPress={() => onPressItem(item)}
             onLongPress={() => onLongPressItem(item)}
+             style={styles.listItem}
          >{item.title}</Text>
        </View>} />
 
@@ -120,6 +124,7 @@ function ToDoListScreen({route, navigation}: any)
              onPress={() => onPressItem(item)}
          onLongPress={() => onLongPressItem(item)
          }
+             style={styles.listItemDone}
          >{item.title}</Text>
        </View>} />
      </View>
@@ -131,7 +136,7 @@ function ToDoScreen({route, navigation}: any)
   const { title, todolist } = route.params;
   const todo: ToDo = todolist.find((td: ToDo) => td.title == title);
 
-  return <View>
+  return <View style={styles.container}>
     <Text>{todo.title}</Text>
     <Text>{todo.date.toDateString()}</Text>
     <Text>{todo.text}</Text>
@@ -151,7 +156,7 @@ function AddScreen({route, navigation}: any)
     state: false
   }
 
-  return <View>
+  return <View style={styles.container}>
     <Text>Title</Text>
     <TextInput style={styles.input} onChange={(e) => setTitle(e.nativeEvent.text)}></TextInput>
 
@@ -159,7 +164,9 @@ function AddScreen({route, navigation}: any)
     <TextInput style={styles.input} value={item.text} onChange={(e) => setText(e.nativeEvent.text)}></TextInput>
 
     <Text>Date</Text>
-    <Text onPress={() => {
+    <Text
+        style={styles.input}
+        onPress={() => {
       DateTimePickerAndroid.open({
         value: date,
         mode: "date",
@@ -190,15 +197,48 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    margin: 8
+    margin: 10
   },
   listTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center'
   },
+  listItem: {
+    marginTop: 5,
+    marginBottom: 5,
+    padding: 5,
+    borderStyle: "solid",
+    borderColor: 'black',
+    borderWidth: 1
+  },
+  listItemDone: {
+    marginTop: 5,
+    marginBottom: 5,
+    padding: 5,
+    borderStyle: "solid",
+    borderColor: 'black',
+    backgroundColor: "rgb(76,255,3)",
+    borderWidth: 1
+  },
   input: {
-    width: '100%'
+    width: '100%',
+    marginBottom: 10,
+    borderStyle: "solid",
+    borderColor: 'black',
+    borderWidth: 1,
+    padding: 2
+  },
+  "m-2": {
+    margin: 10
+  },
+  "mt-2": {
+    marginTop: 10
+  },
+  "mb-2": {
+    marginBottom: 10
+  },
+  "mb-1": {
+    marginBottom: 5
   }
 });
